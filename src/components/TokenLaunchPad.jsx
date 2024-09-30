@@ -1,4 +1,4 @@
-import { createInitializeMint2Instruction, getMinimumBalanceForRentExemptMint, MINT_SIZE, TOKEN_PROGRAM_ID } from "@solana/spl-token"
+import { createInitializeMint2Instruction, getMinimumBalanceForRentExemptMint, MINT_SIZE, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
 
@@ -15,8 +15,9 @@ export function TokenLaunchPad() {
     async function createToken() {
         // const name = document.getElementById("name").value;
         // const symbol = document.getElementById("symbol").value;
-        // const image = document.getElementById("image").value;
-        // const initialSupply = document.getElementById("initialSupply").value;
+        // const image = document.getElementById("image").value;export default defineConfig({
+        //   plugins: [react(), nodePolyfills(),],
+        //   })uuu
         const keypair = Keypair.generate();
         const lamports = await getMinimumBalanceForRentExemptMint(connection);
         const transaction = new Transaction().add(
@@ -25,9 +26,9 @@ export function TokenLaunchPad() {
                 newAccountPubkey: keypair.publicKey,
                 lamports,
                 space: MINT_SIZE,
-                TOKEN_PROGRAM_ID,
+                programId: TOKEN_PROGRAM_ID,
             }),
-            createInitializeMint2Instruction(keypair.publicKey, 6, wallet.publicKey, null, TOKEN_PROGRAM_ID)
+            createInitializeMint2Instruction(keypair.publicKey, 9, wallet.publicKey, null, TOKEN_PROGRAM_ID)
         );
         transaction.feePayer = wallet.publicKey;
         transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
