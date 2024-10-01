@@ -81,7 +81,8 @@ export function TokenLaunchPad() {
             createAccountInstruction,
             initializeMetadataPointerInstruction,
             initializeMintInstruction,
-            initializeMetadataInstruction
+            initializeMetadataInstruction,
+            updateFieldInstruction
         );
 
         transaction.feePayer = wallet.publicKey;
