@@ -1,4 +1,4 @@
-import { createInitializeMetadataPointerInstruction, createInitializeMint2Instruction, createInitializeMintInstruction, ExtensionType, getMinimumBalanceForRentExemptMint, getMintLen, LENGTH_SIZE, MINT_SIZE, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, TYPE_SIZE } from "@solana/spl-token"
+import { createAssociatedTokenAccountInstruction, createInitializeMetadataPointerInstruction, createInitializeMint2Instruction, createInitializeMintInstruction, createMintToInstruction, ExtensionType, getAssociatedTokenAddressSync, getMinimumBalanceForRentExemptMint, getMintLen, LENGTH_SIZE, MINT_SIZE, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, TYPE_SIZE } from "@solana/spl-token"
 import { createInitializeInstruction, createUpdateFieldInstruction, pack } from "@solana/spl-token-metadata";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
@@ -91,6 +91,41 @@ export function TokenLaunchPad() {
 
         await wallet.sendTransaction(transaction, connection);
         console.log(keypair.publicKey.toBase58());
+
+        const associatedToken = getAssociatedTokenAddressSync(
+            keypair.publicKey,
+            wallet.publicKey,
+            false,
+            TOKEN_2022_PROGRAM_ID
+        );
+
+        console.log("associated address: "+ associatedToken);
+
+        const associatedTransaction = new Transaction().add(
+            createAssociatedTokenAccountInstruction(
+                wallet.publicKey,
+                associatedToken,
+                wallet.publicKey,
+                keypair.publicKey,
+                TOKEN_2022_PROGRAM_ID
+            )
+        );
+        await wallet.sendTransaction(associatedTransaction, connection);
+        console.log("associated transaction");
+      
+        const transaction3 = new Transaction().add(
+            createMintToInstruction(
+                keypair.publicKey,
+                associatedToken,
+                wallet.publicKey,
+                1000000000,
+                [],
+                TOKEN_2022_PROGRAM_ID
+            )
+        );
+
+        await wallet.sendTransaction(transaction3, connection);
+        console.log("final transaction");
     }
 
     return <div style={{
